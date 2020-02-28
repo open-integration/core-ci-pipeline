@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: azurefile
+  name: openintegration-shared-volume
 spec:
   accessModes:
     - ReadWriteMany

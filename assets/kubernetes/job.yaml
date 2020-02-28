@@ -15,6 +15,10 @@ spec:
       name: core-ci
     spec:
       restartPolicy: Never
+      volumes:
+        - name: azurefile
+          persistentVolumeClaim:
+              claimName: openintegration-shared-volume
       containers:
       - name: root
         command:
@@ -24,3 +28,10 @@ spec:
         env:
         - name: IN_CLUSTER
           value: "true"
+        - name: PVC_NAME
+          value: openintegration-shared-volume
+        - name: LOG_DIRECTORY
+          value: /openintegration/logs
+        volumeMounts:
+          - name: openintegration-shared-volume
+            mountPath: /openintegration
