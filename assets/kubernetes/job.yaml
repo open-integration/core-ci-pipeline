@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: core-ci
+  name: core-ci
+spec:
+  backoffLimit: 0
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: core-ci
+      name: core-ci
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: root
+        command:
+        - ./core-ci
+        image: openintegration/core-ci-pipeline
+        imagePullPolicy: Always
+        env:
+        - name: IN_CLUSTER
+          value: "true"

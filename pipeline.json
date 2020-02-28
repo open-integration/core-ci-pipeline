@@ -1,0 +1,13 @@
+{
+    "metadata": {
+        "name": "core-ci",
+        "goModule": "open-integration/core-ci"
+    },
+    "services": [
+        {
+            "name": "kubernetes",
+            "as": "kubernetes",
+            "version": "0.1.0"
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+version: '1.0'
+
+steps:
+
+  Clone:
+    type: git-clone
+    repo: open-integration/core-ci-pipeline
+    git: cf_github
+    revision: ${{CF_REVISION}}
+
+  Build:
+    type: build
+    image_name: openintegration/core-ci-pipeline
+    tag: ${{CF_REVISION}}
+    working_directory: ${{Clone}}
+
+  Push:
+    type: push
+    candidate: ${{Build}}
+    tag: latest
+    image_name: openintegration/core-ci-pipeline
