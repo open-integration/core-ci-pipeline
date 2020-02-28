@@ -23,7 +23,7 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/open-integration/core v0.44.0
 	github.com/open-integration/service-catalog/google-spreadsheet v0.10.0 // indirect
-	github.com/open-integration/service-catalog/kubernetes v0.2.0
+	github.com/open-integration/service-catalog/kubernetes v0.3.0
 	github.com/rogpeppe/go-internal v1.5.2 // indirect
 	github.com/zealic/xignore v0.3.3 // indirect
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d // indirect

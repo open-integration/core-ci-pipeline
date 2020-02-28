@@ -275,6 +275,8 @@ github.com/open-integration/service-catalog/kubernetes v0.1.0 h1:A5FNpiJVbvGi88a
 github.com/open-integration/service-catalog/kubernetes v0.1.0/go.mod h1:2VXjCFBInF4wtlzjZls02/zYdCJBfiHFD4GWS5FTnt4=
 github.com/open-integration/service-catalog/kubernetes v0.2.0 h1:5L6Zl86jwql97V8TEuH7pp/wnfQhzxOjEPpT4dT30TY=
 github.com/open-integration/service-catalog/kubernetes v0.2.0/go.mod h1:jNasZ2MDqKtghNVpuRcqRBiOujNjA7KQvXPNKm5Kl1k=
+github.com/open-integration/service-catalog/kubernetes v0.3.0 h1:nDvjvvJj2VEos68pcTNayOEm7UGBhqPxnmmMJw7wg4Q=
+github.com/open-integration/service-catalog/kubernetes v0.3.0/go.mod h1:WKl1Mw1WTrPckmaaL/GArbJeNsDcPn5sMJduYh1ynmg=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pascaldekloe/goe v0.1.0/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
