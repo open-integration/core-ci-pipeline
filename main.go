@@ -49,10 +49,9 @@ func main() {
 		Spec: core.PipelineSpec{
 			Services: []core.Service{
 				core.Service{
-					As:   "kubernetes",
-					Name: "kubernetes",
-					// Version: "0.1.0",
-					Path: "/Users/olsynt/workspace/personal/open-integration/service-catalog/kubernetes/dist/kubernetes-0.3.0-darwin-amd64",
+					As:      "kubernetes",
+					Name:    "kubernetes",
+					Version: "0.3.0",
 				},
 			},
 			Reactions: []core.EventReaction{
