@@ -267,6 +267,8 @@ github.com/open-integration/core v0.41.0 h1:bzu6XNlRVv7uus4x2ggbKd477tcjbJtbniO+
 github.com/open-integration/core v0.41.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
 github.com/open-integration/core v0.43.0 h1:WMIAmTtrRHP0tlutFVcZakBpZSrDcpatZb62xz1Fq6g=
 github.com/open-integration/core v0.43.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
+github.com/open-integration/core v0.44.0 h1:gJqYBpDhnzDU5efbVpbewaZy3ngJfA6NXPNje9tWoMs=
+github.com/open-integration/core v0.44.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
 github.com/open-integration/service-catalog/google-spreadsheet v0.10.0/go.mod h1:S4BZYUALwBgyhpUIaoaLncyWreUKZVnWvZy1rAEzhvM=
 github.com/open-integration/service-catalog/jira v0.1.0/go.mod h1:BNszhZOOWtMe5Ko9k/DavxQiU2CvZS0G5V8Y6wwBmIM=
 github.com/open-integration/service-catalog/kubernetes v0.1.0 h1:A5FNpiJVbvGi88as78ow/ntuXzp82VYyU7Z7fgGCIp0=

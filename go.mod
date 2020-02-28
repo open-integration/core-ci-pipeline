@@ -9,7 +9,6 @@ require (
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/docker/libkv v0.2.1 // indirect
 	github.com/dustin/gojson v0.0.0-20160307161227-2e71ec9dd5ad // indirect
-	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gobuffalo/packd v1.0.0 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
@@ -22,7 +21,7 @@ require (
 	github.com/hashicorp/vault/api v1.0.4 // indirect
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
-	github.com/open-integration/core v0.43.0
+	github.com/open-integration/core v0.44.0
 	github.com/open-integration/service-catalog/google-spreadsheet v0.10.0 // indirect
 	github.com/open-integration/service-catalog/kubernetes v0.2.0
 	github.com/rogpeppe/go-internal v1.5.2 // indirect
@@ -42,5 +41,3 @@ require (
 )
 
 replace gopkg.in/hairyhenderson/yaml.v2 => github.com/maxaudron/yaml v0.0.0-20190411130442-27c13492fe3c
-
-replace github.com/open-integration/core => ../core
