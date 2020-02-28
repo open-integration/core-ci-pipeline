@@ -35,7 +35,13 @@ type (
 	}
 )
 
+var pvc = "core-ci-pvc"
+
 func main() {
+	if p := os.Getenv("PVC_NAME"); p != "" {
+		pvc = p
+	}
+
 	kube, err := buildKubeCredentials()
 	dieOnError(err)
 	wfcontext := &workflowcontext{
@@ -147,17 +153,17 @@ func buildPodString(namespace string, name string, cmd string, image string) str
 					VolumeMounts: []v1.VolumeMount{
 						v1.VolumeMount{
 							MountPath: "/azured",
-							Name:      "volume-1",
+							Name:      pvc,
 						},
 					},
 				},
 			},
 			Volumes: []v1.Volume{
 				v1.Volume{
-					Name: "volume-1",
+					Name: pvc,
 					VolumeSource: v1.VolumeSource{
 						PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
-							ClaimName: "volume-1",
+							ClaimName: pvc,
 						},
 					},
 				},
@@ -172,7 +178,7 @@ func buildPvcString(namespace string) string {
 	sc := "azurefile"
 	pvc := &v1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "volume-1",
+			Name:      pvc,
 			Namespace: namespace,
 		},
 		Spec: v1.PersistentVolumeClaimSpec{
