@@ -35,11 +35,18 @@ type (
 	}
 )
 
-var pvc = "core-ci-pvc"
+var (
+	pvc     = "core-ci-pvc"
+	logsdir = ""
+)
 
 func main() {
 	if p := os.Getenv("PVC_NAME"); p != "" {
 		pvc = p
+	}
+
+	if l := os.Getenv("LOG_DIRECTORY"); l != "" {
+		logsdir = l
 	}
 
 	kube, err := buildKubeCredentials()
@@ -126,6 +133,9 @@ func main() {
 			Host:   wfcontext.kube.host,
 			Token:  wfcontext.kube.token,
 		}
+	}
+	if logsdir != "" {
+		opt.LogsDirectory = logsdir
 	}
 	e := core.NewEngine(opt)
 	core.HandleEngineError(e.Run())
