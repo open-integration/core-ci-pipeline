@@ -129,10 +129,12 @@ func main() {
 	}
 	if os.Getenv("IN_CLUSTER") != "" {
 		opt.Kubeconfig = &core.EngineKubernetesOptions{
-			B64Crt:    wfcontext.kube.crt,
-			Host:      wfcontext.kube.host,
-			Token:     wfcontext.kube.token,
-			InCluster: true,
+			B64Crt:              wfcontext.kube.crt,
+			Host:                wfcontext.kube.host,
+			Token:               wfcontext.kube.token,
+			InCluster:           true,
+			LogsVolumeClaimName: pvc,
+			LogsVolumeName:      pvc,
 		}
 	}
 	if logsdir != "" {
