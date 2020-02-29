@@ -16,7 +16,7 @@ spec:
     spec:
       restartPolicy: Never
       volumes:
-        - name: azurefile
+        - name: openintegration-shared-volume
           persistentVolumeClaim:
               claimName: openintegration-shared-volume
       containers:
