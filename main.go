@@ -135,6 +135,7 @@ func main() {
 			InCluster:           true,
 			LogsVolumeClaimName: pvc,
 			LogsVolumeName:      pvc,
+			Namespace:           kube.namespace,
 		}
 	}
 	if logsdir != "" {
