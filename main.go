@@ -163,10 +163,10 @@ func buildPodString(namespace string, name string, cmd string, image string) str
 					Args: []string{
 						cmd,
 					},
-					WorkingDir: "/azured",
+					WorkingDir: "/openintegration",
 					VolumeMounts: []v1.VolumeMount{
 						v1.VolumeMount{
-							MountPath: "/azured",
+							MountPath: "/openintegration",
 							Name:      pvc,
 						},
 					},
