@@ -98,7 +98,11 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("download-binaries", []string{
+								"ls",
+								"pwd",
 								"cd core",
+								"ls",
+								"pwd",
 								"go mod tidy",
 							}, wfcontext),
 						}
