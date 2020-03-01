@@ -152,6 +152,8 @@ github.com/open-integration/core v0.44.0 h1:gJqYBpDhnzDU5efbVpbewaZy3ngJfA6NXPNj
 github.com/open-integration/core v0.44.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
 github.com/open-integration/core v0.45.0 h1:4QSUPjOVNs8YlTDcIpjNn6R0/fV+0VAnUesF+263i54=
 github.com/open-integration/core v0.45.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
+github.com/open-integration/core v0.46.0 h1:6WKjCxVe7ljwOzGErjfncx5nGe9aK1UB+hQIguQ7Mio=
+github.com/open-integration/core v0.46.0/go.mod h1:QfeLVnFlQ0YBb0R4HgXtXRZJkn+L/2a3580PIwAs0/o=
 github.com/open-integration/service-catalog/jira v0.1.0/go.mod h1:BNszhZOOWtMe5Ko9k/DavxQiU2CvZS0G5V8Y6wwBmIM=
 github.com/open-integration/service-catalog/kubernetes v0.3.0 h1:nDvjvvJj2VEos68pcTNayOEm7UGBhqPxnmmMJw7wg4Q=
 github.com/open-integration/service-catalog/kubernetes v0.3.0/go.mod h1:WKl1Mw1WTrPckmaaL/GArbJeNsDcPn5sMJduYh1ynmg=

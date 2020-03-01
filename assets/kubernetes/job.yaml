@@ -31,7 +31,7 @@ spec:
         - name: PVC_NAME
           value: openintegration-shared-volume
         - name: LOG_DIRECTORY
-          value: /openintegration/logs
+          value: /openintegration
         volumeMounts:
           - name: openintegration-shared-volume
             mountPath: /openintegration
