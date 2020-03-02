@@ -98,7 +98,8 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("download-binaries", []string{
-								"sleep 10",
+								// azurefile mount bug
+								"sleep 2",
 								"cd core",
 								"go mod tidy",
 							}, wfcontext),
@@ -110,7 +111,6 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("test", []string{
-								"sleep 10",
 								"cd core",
 								"mkdir .cover",
 								"make test",
