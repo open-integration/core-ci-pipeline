@@ -98,11 +98,8 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("download-binaries", []string{
-								"ls",
-								"pwd",
+								"sleep 10",
 								"cd core",
-								"ls",
-								"pwd",
 								"go mod tidy",
 							}, wfcontext),
 						}
@@ -113,11 +110,13 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("test", []string{
+								"sleep 10",
 								"cd core",
 								"mkdir .cover",
 								"make test",
 							}, wfcontext),
 							buildKubeRunTask("test-fmt", []string{
+								"sleep 10",
 								"cd core",
 								"make test-fmt",
 							}, wfcontext),
@@ -201,7 +200,7 @@ func buildPvcString(namespace string) string {
 		},
 		Spec: v1.PersistentVolumeClaimSpec{
 			AccessModes: []v1.PersistentVolumeAccessMode{
-				v1.ReadWriteOnce,
+				v1.ReadWriteMany,
 			},
 			StorageClassName: &sc,
 			Resources: v1.ResourceRequirements{
@@ -216,7 +215,11 @@ func buildPvcString(namespace string) string {
 }
 
 func buildCommand(cmds []string) string {
-	return strings.Join(cmds, " && ")
+	command := []string{
+		"set -e",
+	}
+	command = append(command, cmds...)
+	return strings.Join(command, " ; ")
 }
 
 func buildAuthTaskArgument(wfcontext *workflowcontext) task.Argument {
@@ -234,8 +237,7 @@ func buildAuthTaskArgument(wfcontext *workflowcontext) task.Argument {
 func getEnvOrDie(name string) string {
 	v := os.Getenv(name)
 	if v == "" {
-		fmt.Printf("Variable \"%s\" is not set, exiting", name)
-		os.Exit(1)
+		dieOnError(fmt.Errorf("Variable \"%s\" is not set, exiting", name))
 	}
 	return v
 }
