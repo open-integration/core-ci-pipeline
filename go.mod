@@ -3,7 +3,6 @@ module open-integration/core-ci-pipeline
 go 1.13
 
 require (
-	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/googleapis/gnostic v0.4.1 // indirect
@@ -26,5 +25,3 @@ require (
 )
 
 replace gopkg.in/hairyhenderson/yaml.v2 => github.com/maxaudron/yaml v0.0.0-20190411130442-27c13492fe3c
-
-replace github.com/open-integration/core => ../core
