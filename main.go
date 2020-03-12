@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/open-integration/core"
@@ -50,7 +51,7 @@ func main() {
 				core.Service{
 					As:      "kubernetes",
 					Name:    "kubernetes",
-					Version: "0.3.0",
+					Version: "0.8.0",
 				},
 			},
 			Reactions: []core.EventReaction{
@@ -65,7 +66,7 @@ func main() {
 							buildKubeRunTask("clone", []string{
 								"rm -rf core",
 								"git clone https://github.com/open-integration/core",
-							}, wfcontext),
+							}, []string{}, wfcontext),
 						}
 					},
 				},
@@ -74,10 +75,12 @@ func main() {
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
 							buildKubeRunTask("download-binaries", []string{
-								// azurefile mount bug
-								"sleep 2",
 								"cd core",
-								"go mod tidy",
+								"go mod download",
+							}, []string{
+								"GOCACHE=/openintegration/gocache",
+								// "GOPATH=/openintegration/gopath",
+								"GO111MODULE=on",
 							}, wfcontext),
 						}
 					},
@@ -89,13 +92,47 @@ func main() {
 							buildKubeRunTask("test", []string{
 								"cd core",
 								"mkdir .cover",
-								"make test",
+								// "make test",
+							}, []string{
+								"GOCACHE=/openintegration/gocache",
+								// "GOPATH=/openintegration/gopath",
+								"GO111MODULE=on",
 							}, wfcontext),
 							buildKubeRunTask("test-fmt", []string{
-								"sleep 2",
 								"cd core",
 								"make test-fmt",
-							}, wfcontext),
+							}, []string{}, wfcontext),
+							buildKubeRunTask("export-vars", []string{
+								"cd core",
+								"make export-vars",
+							}, []string{}, wfcontext),
+						}
+					},
+				},
+				core.EventReaction{
+					Condition: core.ConditionTaskFinishedWithStatus("test", state.TaskStatusSuccess),
+					Reaction: func(ev state.Event, state state.State) []task.Task {
+						if true || os.Getenv("CODECOV_TOKEN") == "" {
+							return []task.Task{}
+						}
+						envs := []string{
+							fmt.Sprintf("CODECOV_TOKEN=%s", os.Getenv("CODECOV_TOKEN")),
+						}
+						if os.Getenv("CI_BUILD_ID") != "" {
+							envs = append(envs, fmt.Sprintf("CI_BUILD_ID=%s", os.Getenv("CI_BUILD_ID")))
+						}
+						if os.Getenv("CI_BUILD_URL") != "" {
+							envs = append(envs, fmt.Sprintf("CI_BUILD_URL=%s", os.Getenv("CI_BUILD_URL")))
+						}
+						return []task.Task{
+							buildKubeRunTask("codecov", []string{
+								"cd core",
+								"curl -o codecov.sh https://codecov.io/bash && chmod +x codecov.sh",
+								"export VCS_BRANCH_NAME=$(cat ./branch.var)",
+								"export VCS_SLUG=$(cat ./slug.var)",
+								"export VCS_COMMIT_ID=$(cat ./commit.var)",
+								"./codecov.sh -e VCS_COMMIT_ID,VCS_BRANCH_NAME,VCS_SLUG,CI_BUILD_ID,CI_BUILD_URL",
+							}, envs, wfcontext),
 						}
 					},
 				},

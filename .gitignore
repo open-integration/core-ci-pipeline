@@ -2,3 +2,5 @@
 core-ci
 logs
 .vscode
+events.yaml
+state.yaml

@@ -24,7 +24,15 @@ func buildCommand(cmds []string) string {
 	return strings.Join(command, " ; ")
 }
 
-func buildPodString(namespace string, name string, cmd string, image string, pvc string) string {
+func buildPodString(namespace string, name string, cmd string, environ []string, image string, pvc string) string {
+	envs := []v1.EnvVar{}
+	for _, e := range environ {
+		kv := strings.Split(e, "=")
+		envs = append(envs, v1.EnvVar{
+			Name:  kv[0],
+			Value: kv[1],
+		})
+	}
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
@@ -49,6 +57,7 @@ func buildPodString(namespace string, name string, cmd string, image string, pvc
 							Name:      pvc,
 						},
 					},
+					Env: envs,
 				},
 			},
 			Volumes: []v1.Volume{
@@ -89,7 +98,7 @@ func buildPvcString(namespace string, pvc string) string {
 	return string(p)
 }
 
-func buildKubeRunTask(name string, commands []string, wfcontext *workflowcontext) task.Task {
+func buildKubeRunTask(name string, commands []string, environ []string, wfcontext *workflowcontext) task.Task {
 	return task.Task{
 		Metadata: task.Metadata{
 			Name: name,
@@ -105,7 +114,7 @@ func buildKubeRunTask(name string, commands []string, wfcontext *workflowcontext
 				},
 				task.Argument{
 					Key:   "Pod",
-					Value: buildPodString(wfcontext.kube.namespace, name, buildCommand(commands), "openintegration/testing", wfcontext.pvc),
+					Value: buildPodString(wfcontext.kube.namespace, name, buildCommand(commands), environ, "openintegration/testing", wfcontext.pvc),
 				},
 			},
 		},
