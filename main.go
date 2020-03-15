@@ -56,17 +56,21 @@ func main() {
 			},
 			Reactions: []core.EventReaction{
 				core.EventReaction{
-					Condition: core.ConditionEngineStarted,
+					Condition: core.ConditionEngineStarted(),
 					Reaction:  reactToEngineStartedEvent(wfcontext),
 				},
 				core.EventReaction{
 					Condition: core.ConditionTaskFinished(CreatePVCTask),
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
-							buildKubeRunTask("clone", []string{
-								"rm -rf core",
-								"git clone https://github.com/open-integration/core",
-							}, []string{}, wfcontext),
+							buildKubeRunTask(&kubeRunTaskOptions{
+								name: "clone",
+								commands: []string{
+									"rm -rf core",
+									"git clone https://github.com/open-integration/core",
+								},
+								wfcontext: wfcontext,
+							}),
 						}
 					},
 				},
@@ -74,14 +78,19 @@ func main() {
 					Condition: core.ConditionTaskFinishedWithStatus("clone", state.TaskStatusSuccess),
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
-							buildKubeRunTask("download-binaries", []string{
-								"cd core",
-								"go mod download",
-							}, []string{
-								"GOCACHE=/openintegration/gocache",
-								// "GOPATH=/openintegration/gopath",
-								"GO111MODULE=on",
-							}, wfcontext),
+							buildKubeRunTask(
+								&kubeRunTaskOptions{
+									name: "download-binaries",
+									commands: []string{
+										"cd core",
+										"go mod tidy",
+									},
+									environ: []string{
+										"GOCACHE=/openintegration/gocache",
+										"GO111MODULE=on",
+									},
+									wfcontext: wfcontext,
+								}),
 						}
 					},
 				},
@@ -89,23 +98,37 @@ func main() {
 					Condition: core.ConditionTaskFinishedWithStatus("download-binaries", state.TaskStatusSuccess),
 					Reaction: func(ev state.Event, state state.State) []task.Task {
 						return []task.Task{
-							buildKubeRunTask("test", []string{
-								"cd core",
-								"mkdir .cover",
-								// "make test",
-							}, []string{
-								"GOCACHE=/openintegration/gocache",
-								// "GOPATH=/openintegration/gopath",
-								"GO111MODULE=on",
-							}, wfcontext),
-							buildKubeRunTask("test-fmt", []string{
-								"cd core",
-								"make test-fmt",
-							}, []string{}, wfcontext),
-							buildKubeRunTask("export-vars", []string{
-								"cd core",
-								"make export-vars",
-							}, []string{}, wfcontext),
+							buildKubeRunTask(
+								&kubeRunTaskOptions{
+									name: "test",
+									commands: []string{
+										"cd core",
+										"mkdir .cover",
+										"make test",
+									},
+									environ: []string{
+										"GOCACHE=/openintegration/gocache",
+										"GO111MODULE=on",
+									},
+									wfcontext: wfcontext,
+								}),
+							buildKubeRunTask(
+								&kubeRunTaskOptions{
+									name: "test-fmt",
+									commands: []string{
+										"cd core",
+										"make test-fmt",
+									},
+									wfcontext: wfcontext,
+								}),
+							buildKubeRunTask(&kubeRunTaskOptions{
+								name: "export-vars",
+								commands: []string{
+									"cd core",
+									"make export-vars",
+								},
+								wfcontext: wfcontext,
+							}),
 						}
 					},
 				},
@@ -125,14 +148,73 @@ func main() {
 							envs = append(envs, fmt.Sprintf("CI_BUILD_URL=%s", os.Getenv("CI_BUILD_URL")))
 						}
 						return []task.Task{
-							buildKubeRunTask("codecov", []string{
-								"cd core",
-								"curl -o codecov.sh https://codecov.io/bash && chmod +x codecov.sh",
-								"export VCS_BRANCH_NAME=$(cat ./branch.var)",
-								"export VCS_SLUG=$(cat ./slug.var)",
-								"export VCS_COMMIT_ID=$(cat ./commit.var)",
-								"./codecov.sh -e VCS_COMMIT_ID,VCS_BRANCH_NAME,VCS_SLUG,CI_BUILD_ID,CI_BUILD_URL",
-							}, envs, wfcontext),
+							buildKubeRunTask(
+								&kubeRunTaskOptions{
+									name: "codecov",
+									commands: []string{
+										"cd core",
+										"curl -o codecov.sh https://codecov.io/bash && chmod +x codecov.sh",
+										"export VCS_BRANCH_NAME=$(cat ./branch.var)",
+										"export VCS_SLUG=$(cat ./slug.var)",
+										"export VCS_COMMIT_ID=$(cat ./commit.var)",
+										"./codecov.sh -e VCS_COMMIT_ID,VCS_BRANCH_NAME,VCS_SLUG,CI_BUILD_ID,CI_BUILD_URL",
+									},
+									environ:   envs,
+									wfcontext: wfcontext,
+								}),
+						}
+					},
+				},
+				core.EventReaction{
+					Condition: core.ConditionTaskFinishedWithStatus("export-vars", state.TaskStatusSuccess),
+					Reaction: func(ev state.Event, state state.State) []task.Task {
+						if os.Getenv("SNYK_TOKEN") == "" {
+							return []task.Task{}
+						}
+						envs := []string{
+							fmt.Sprintf("SNYK_TOKEN=%s", os.Getenv("SNYK_TOKEN")),
+						}
+						return []task.Task{
+							buildKubeRunTask(&kubeRunTaskOptions{
+								name: "security-test",
+								commands: []string{
+									"cd core",
+									"snyk auth $SNYK_TOKEN",
+									"snyk monitor",
+								},
+								environ:   envs,
+								wfcontext: wfcontext,
+							}),
+						}
+					},
+				},
+				core.EventReaction{
+					Condition: core.ConditionCombined(
+						core.ConditionTaskFinishedWithStatus("security-test", state.TaskStatusSuccess),
+						core.ConditionTaskFinishedWithStatus("test-fmt", state.TaskStatusSuccess),
+						core.ConditionTaskFinishedWithStatus("test", state.TaskStatusSuccess),
+						core.ConditionTaskFinishedWithStatus("codecov", state.TaskStatusSuccess),
+					),
+					Reaction: func(ev state.Event, state state.State) []task.Task {
+						envs := []string{}
+						if os.Getenv("GITHUB_TOKEN") != "" {
+							envs = append(envs, os.Getenv("GITHUB_TOKEN"))
+						}
+						return []task.Task{
+							buildKubeRunTask(&kubeRunTaskOptions{
+								name: "new-release",
+								commands: []string{
+									"cd code",
+									"export VERSION=$(cat ./version.var)",
+									"git remote rm origin",
+									"git remote add origin https://olegsu:$GITHUB_TOKEN@github.com/open-integration/core.git",
+									"git tag v$VERSION",
+									"git push --tags",
+								},
+								environ:   envs,
+								image:     "codefresh/cli",
+								wfcontext: wfcontext,
+							}),
 						}
 					},
 				},

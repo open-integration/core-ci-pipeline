@@ -9,8 +9,8 @@ require (
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
-	github.com/open-integration/core v0.48.0
-	github.com/open-integration/service-catalog/kubernetes v0.3.0
+	github.com/open-integration/core v0.52.0
+	github.com/open-integration/service-catalog/kubernetes v0.8.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d // indirect
 	golang.org/x/net v0.0.0-20200222125558-5a598a2470a0 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect

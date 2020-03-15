@@ -16,6 +16,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type (
+	kubeRunTaskOptions struct {
+		name      string
+		commands  []string
+		environ   []string
+		wfcontext *workflowcontext
+		image     string
+	}
+)
+
 func buildCommand(cmds []string) string {
 	command := []string{
 		"set -e",
@@ -35,7 +45,7 @@ func buildPodString(namespace string, name string, cmd string, environ []string,
 	}
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
+			Name:      strings.ReplaceAll(name, " ", "-"),
 			Namespace: namespace,
 		},
 		Spec: v1.PodSpec{
@@ -98,23 +108,27 @@ func buildPvcString(namespace string, pvc string) string {
 	return string(p)
 }
 
-func buildKubeRunTask(name string, commands []string, environ []string, wfcontext *workflowcontext) task.Task {
+func buildKubeRunTask(opt *kubeRunTaskOptions) task.Task {
+	image := "openintegration/testing"
+	if opt.image != "" {
+		image = opt.image
+	}
 	return task.Task{
 		Metadata: task.Metadata{
-			Name: name,
+			Name: opt.name,
 		},
 		Spec: task.Spec{
 			Service:  "kubernetes",
 			Endpoint: "run",
 			Arguments: []task.Argument{
-				buildAuthTaskArgument(wfcontext),
+				buildAuthTaskArgument(opt.wfcontext),
 				task.Argument{
 					Key:   "Timeout",
 					Value: 120,
 				},
 				task.Argument{
 					Key:   "Pod",
-					Value: buildPodString(wfcontext.kube.namespace, name, buildCommand(commands), environ, "openintegration/testing", wfcontext.pvc),
+					Value: buildPodString(opt.wfcontext.kube.namespace, opt.name, buildCommand(opt.commands), opt.environ, image, opt.wfcontext.pvc),
 				},
 			},
 		},

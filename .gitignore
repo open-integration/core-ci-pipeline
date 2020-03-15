@@ -4,3 +4,4 @@ logs
 .vscode
 events.yaml
 state.yaml
+graph.dot
